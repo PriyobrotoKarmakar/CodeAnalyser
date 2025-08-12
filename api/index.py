@@ -29,13 +29,42 @@ class handler(BaseHTTPRequestHandler):
         """Set CORS headers for all responses"""
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.send_header('Access-Control-Max-Age', '86400')
     
     def do_OPTIONS(self):
         """Handle preflight CORS requests"""
         self.send_response(200)
         self._set_cors_headers()
         self.end_headers()
+    
+    def do_GET(self):
+        """Handle GET requests for API status"""
+        try:
+            # Simple API status endpoint
+            if self.path.strip('/') in ['', 'api', 'api/']:
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self._set_cors_headers()
+                self.end_headers()
+                
+                response = {
+                    "status": "API is running",
+                    "endpoints": [
+                        "/api/create",
+                        "/api/complexity", 
+                        "/api/debug",
+                        "/api/graph-data"
+                    ]
+                }
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+            else:
+                self.send_response(404)
+                self._set_cors_headers()
+                self.end_headers()
+        except Exception as e:
+            print(f"GET Error: {str(e)}")
+            self._send_error(500, f"Internal server error: {str(e)}")
     
     def do_POST(self):
         """Handle all POST requests"""
