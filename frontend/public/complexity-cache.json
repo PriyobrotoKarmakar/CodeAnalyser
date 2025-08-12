@@ -1,0 +1,924 @@
+{
+    "o(1)": {
+        "name": "Constant Time",
+        "description": "Operations remain constant regardless of input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 1
+            },
+            {
+                "input_size": 10,
+                "operations": 1
+            },
+            {
+                "input_size": 15,
+                "operations": 1
+            },
+            {
+                "input_size": 20,
+                "operations": 1
+            },
+            {
+                "input_size": 25,
+                "operations": 1
+            },
+            {
+                "input_size": 30,
+                "operations": 1
+            },
+            {
+                "input_size": 35,
+                "operations": 1
+            },
+            {
+                "input_size": 40,
+                "operations": 1
+            },
+            {
+                "input_size": 45,
+                "operations": 1
+            },
+            {
+                "input_size": 50,
+                "operations": 1
+            }
+        ]
+    },
+    "o(log log n)": {
+        "name": "Double Logarithmic Time",
+        "description": "Operations grow slower than logarithmic",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 0
+            },
+            {
+                "input_size": 5,
+                "operations": 1.53
+            },
+            {
+                "input_size": 10,
+                "operations": 1.73
+            },
+            {
+                "input_size": 15,
+                "operations": 1.91
+            },
+            {
+                "input_size": 20,
+                "operations": 2.00
+            },
+            {
+                "input_size": 25,
+                "operations": 2.10
+            },
+            {
+                "input_size": 30,
+                "operations": 2.18
+            },
+            {
+                "input_size": 35,
+                "operations": 2.24
+            },
+            {
+                "input_size": 40,
+                "operations": 2.30
+            },
+            {
+                "input_size": 45,
+                "operations": 2.35
+            },
+            {
+                "input_size": 50,
+                "operations": 2.39
+            }
+        ]
+    },
+    "o(log n)": {
+        "name": "Logarithmic Time",
+        "description": "Operations grow logarithmically with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 2.32
+            },
+            {
+                "input_size": 10,
+                "operations": 3.32
+            },
+            {
+                "input_size": 15,
+                "operations": 3.91
+            },
+            {
+                "input_size": 20,
+                "operations": 4.32
+            },
+            {
+                "input_size": 25,
+                "operations": 4.64
+            },
+            {
+                "input_size": 30,
+                "operations": 4.91
+            },
+            {
+                "input_size": 35,
+                "operations": 5.13
+            },
+            {
+                "input_size": 40,
+                "operations": 5.32
+            },
+            {
+                "input_size": 45,
+                "operations": 5.49
+            },
+            {
+                "input_size": 50,
+                "operations": 5.64
+            }
+        ]
+    },
+    "o(√n)": {
+        "name": "Square Root Time",
+        "description": "Common in algorithms like primality testing",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 2.24
+            },
+            {
+                "input_size": 10,
+                "operations": 3.16
+            },
+            {
+                "input_size": 15,
+                "operations": 3.87
+            },
+            {
+                "input_size": 20,
+                "operations": 4.47
+            },
+            {
+                "input_size": 25,
+                "operations": 5
+            },
+            {
+                "input_size": 30,
+                "operations": 5.47
+            },
+            {
+                "input_size": 35,
+                "operations": 5.91
+            },
+            {
+                "input_size": 40,
+                "operations": 6.32
+            },
+            {
+                "input_size": 45,
+                "operations": 6.70
+            },
+            {
+                "input_size": 50,
+                "operations": 7.07
+            }
+        ]
+    },
+    "o(sqrt(n))": {
+        "name": "Square Root Time",
+        "description": "Common in algorithms like primality testing",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 2.24
+            },
+            {
+                "input_size": 10,
+                "operations": 3.16
+            },
+            {
+                "input_size": 15,
+                "operations": 3.87
+            },
+            {
+                "input_size": 20,
+                "operations": 4.47
+            },
+            {
+                "input_size": 25,
+                "operations": 5
+            },
+            {
+                "input_size": 30,
+                "operations": 5.47
+            },
+            {
+                "input_size": 35,
+                "operations": 5.91
+            },
+            {
+                "input_size": 40,
+                "operations": 6.32
+            },
+            {
+                "input_size": 45,
+                "operations": 6.70
+            },
+            {
+                "input_size": 50,
+                "operations": 7.07
+            }
+        ]
+    },
+    "o(n)": {
+        "name": "Linear Time",
+        "description": "Operations grow linearly with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 5
+            },
+            {
+                "input_size": 10,
+                "operations": 10
+            },
+            {
+                "input_size": 15,
+                "operations": 15
+            },
+            {
+                "input_size": 20,
+                "operations": 20
+            },
+            {
+                "input_size": 25,
+                "operations": 25
+            },
+            {
+                "input_size": 30,
+                "operations": 30
+            },
+            {
+                "input_size": 35,
+                "operations": 35
+            },
+            {
+                "input_size": 40,
+                "operations": 40
+            },
+            {
+                "input_size": 45,
+                "operations": 45
+            },
+            {
+                "input_size": 50,
+                "operations": 50
+            }
+        ]
+    },
+    "o(n + m)": {
+        "name": "Linear Time",
+        "description": "Operations grow linearly with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 5
+            },
+            {
+                "input_size": 10,
+                "operations": 10
+            },
+            {
+                "input_size": 15,
+                "operations": 15
+            },
+            {
+                "input_size": 20,
+                "operations": 20
+            },
+            {
+                "input_size": 25,
+                "operations": 25
+            },
+            {
+                "input_size": 30,
+                "operations": 30
+            },
+            {
+                "input_size": 35,
+                "operations": 35
+            },
+            {
+                "input_size": 40,
+                "operations": 40
+            },
+            {
+                "input_size": 45,
+                "operations": 45
+            },
+            {
+                "input_size": 50,
+                "operations": 50
+            }
+        ]
+    },
+    "o(n log n)": {
+        "name": "Linearithmic Time",
+        "description": "Common in efficient sorting algorithms",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 11.6
+            },
+            {
+                "input_size": 10,
+                "operations": 33.2
+            },
+            {
+                "input_size": 15,
+                "operations": 58.6
+            },
+            {
+                "input_size": 20,
+                "operations": 86.4
+            },
+            {
+                "input_size": 25,
+                "operations": 116
+            },
+            {
+                "input_size": 30,
+                "operations": 147.3
+            },
+            {
+                "input_size": 35,
+                "operations": 179.6
+            },
+            {
+                "input_size": 40,
+                "operations": 212.8
+            },
+            {
+                "input_size": 45,
+                "operations": 247
+            },
+            {
+                "input_size": 50,
+                "operations": 282
+            }
+        ]
+    },
+    "o(n^1.5)": {
+        "name": "Polynomial Time (n^1.5)",
+        "description": "Slower than n log n, faster than n²",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 11.18
+            },
+            {
+                "input_size": 10,
+                "operations": 31.62
+            },
+            {
+                "input_size": 15,
+                "operations": 58.09
+            },
+            {
+                "input_size": 20,
+                "operations": 89.44
+            },
+            {
+                "input_size": 25,
+                "operations": 125
+            },
+            {
+                "input_size": 30,
+                "operations": 164.32
+            },
+            {
+                "input_size": 35,
+                "operations": 207.06
+            },
+            {
+                "input_size": 40,
+                "operations": 252.98
+            },
+            {
+                "input_size": 45,
+                "operations": 301.87
+            },
+            {
+                "input_size": 50,
+                "operations": 353.55
+            }
+        ]
+    },
+    "o(n²)": {
+        "name": "Quadratic Time",
+        "description": "Operations grow quadratically with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 25
+            },
+            {
+                "input_size": 10,
+                "operations": 100
+            },
+            {
+                "input_size": 15,
+                "operations": 225
+            },
+            {
+                "input_size": 20,
+                "operations": 400
+            },
+            {
+                "input_size": 25,
+                "operations": 625
+            },
+            {
+                "input_size": 30,
+                "operations": 900
+            },
+            {
+                "input_size": 35,
+                "operations": 1225
+            },
+            {
+                "input_size": 40,
+                "operations": 1600
+            },
+            {
+                "input_size": 45,
+                "operations": 2025
+            },
+            {
+                "input_size": 50,
+                "operations": 2500
+            }
+        ]
+    },
+    "o(n^2)": {
+        "name": "Quadratic Time",
+        "description": "Operations grow quadratically with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 25
+            },
+            {
+                "input_size": 10,
+                "operations": 100
+            },
+            {
+                "input_size": 15,
+                "operations": 225
+            },
+            {
+                "input_size": 20,
+                "operations": 400
+            },
+            {
+                "input_size": 25,
+                "operations": 625
+            },
+            {
+                "input_size": 30,
+                "operations": 900
+            },
+            {
+                "input_size": 35,
+                "operations": 1225
+            },
+            {
+                "input_size": 40,
+                "operations": 1600
+            },
+            {
+                "input_size": 45,
+                "operations": 2025
+            },
+            {
+                "input_size": 50,
+                "operations": 2500
+            }
+        ]
+    },
+    "o(n³)": {
+        "name": "Cubic Time",
+        "description": "Operations grow cubically with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 125
+            },
+            {
+                "input_size": 10,
+                "operations": 1000
+            },
+            {
+                "input_size": 15,
+                "operations": 3375
+            },
+            {
+                "input_size": 20,
+                "operations": 8000
+            },
+            {
+                "input_size": 25,
+                "operations": 15625
+            },
+            {
+                "input_size": 30,
+                "operations": 27000
+            },
+            {
+                "input_size": 35,
+                "operations": 42875
+            },
+            {
+                "input_size": 40,
+                "operations": 64000
+            },
+            {
+                "input_size": 45,
+                "operations": 91125
+            },
+            {
+                "input_size": 50,
+                "operations": 125000
+            }
+        ]
+    },
+    "o(n^3)": {
+        "name": "Cubic Time",
+        "description": "Operations grow cubically with input size",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 125
+            },
+            {
+                "input_size": 10,
+                "operations": 1000
+            },
+            {
+                "input_size": 15,
+                "operations": 3375
+            },
+            {
+                "input_size": 20,
+                "operations": 8000
+            },
+            {
+                "input_size": 25,
+                "operations": 15625
+            },
+            {
+                "input_size": 30,
+                "operations": 27000
+            },
+            {
+                "input_size": 35,
+                "operations": 42875
+            },
+            {
+                "input_size": 40,
+                "operations": 64000
+            },
+            {
+                "input_size": 45,
+                "operations": 91125
+            },
+            {
+                "input_size": 50,
+                "operations": 125000
+            }
+        ]
+    },
+    "o(n⁴)": {
+        "name": "Quartic Time",
+        "description": "Rare but possible in naive algorithms",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 625
+            },
+            {
+                "input_size": 10,
+                "operations": 10000
+            },
+            {
+                "input_size": 15,
+                "operations": 50625
+            },
+            {
+                "input_size": 20,
+                "operations": 160000
+            },
+            {
+                "input_size": 25,
+                "operations": 390625
+            },
+            {
+                "input_size": 30,
+                "operations": 810000
+            },
+            {
+                "input_size": 35,
+                "operations": 1500625
+            },
+            {
+                "input_size": 40,
+                "operations": 2560000
+            },
+            {
+                "input_size": 45,
+                "operations": 4100625
+            },
+            {
+                "input_size": 50,
+                "operations": 6250000
+            }
+        ]
+    },
+    "o(n^4)": {
+        "name": "Quartic Time",
+        "description": "Rare but possible in naive algorithms",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 5,
+                "operations": 625
+            },
+            {
+                "input_size": 10,
+                "operations": 10000
+            },
+            {
+                "input_size": 15,
+                "operations": 50625
+            },
+            {
+                "input_size": 20,
+                "operations": 160000
+            },
+            {
+                "input_size": 25,
+                "operations": 390625
+            },
+            {
+                "input_size": 30,
+                "operations": 810000
+            },
+            {
+                "input_size": 35,
+                "operations": 1500625
+            },
+            {
+                "input_size": 40,
+                "operations": 2560000
+            },
+            {
+                "input_size": 45,
+                "operations": 4100625
+            },
+            {
+                "input_size": 50,
+                "operations": 6250000
+            }
+        ]
+    },
+    "o(2^n)": {
+        "name": "Exponential Time (Base 2)",
+        "description": "Operations double with each input increase",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 2
+            },
+            {
+                "input_size": 5,
+                "operations": 32
+            },
+            {
+                "input_size": 10,
+                "operations": 1024
+            },
+            {
+                "input_size": 15,
+                "operations": 32768
+            },
+            {
+                "input_size": 20,
+                "operations": 1048576
+            },
+            {
+                "input_size": 25,
+                "operations": 33554432
+            },
+            {
+                "input_size": 30,
+                "operations": 1073741824
+            },
+            {
+                "input_size": 35,
+                "operations": 34359738368
+            },
+            {
+                "input_size": 40,
+                "operations": 1099511627776
+            },
+            {
+                "input_size": 45,
+                "operations": 35184372088832
+            },
+            {
+                "input_size": 50,
+                "operations": 1125899906842624
+            }
+        ]
+    },
+    "o(3^n)": {
+        "name": "Exponential Time (Base 3)",
+        "description": "Even faster exponential growth than 2^n",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 3
+            },
+            {
+                "input_size": 5,
+                "operations": 243
+            },
+            {
+                "input_size": 10,
+                "operations": 59049
+            },
+            {
+                "input_size": 15,
+                "operations": 14348907
+            },
+            {
+                "input_size": 20,
+                "operations": 3486784401
+            },
+            {
+                "input_size": 25,
+                "operations": 847288609443
+            },
+            {
+                "input_size": 30,
+                "operations": 205891132094649
+            },
+            {
+                "input_size": 35,
+                "operations": 50031545098999707
+            },
+            {
+                "input_size": 40,
+                "operations": 12157665459056928801
+            },
+            {
+                "input_size": 45,
+                "operations": 2954312706550833698643
+            },
+            {
+                "input_size": 50,
+                "operations": 717897987691852588770249
+            }
+        ]
+    },
+    "o(n!)": {
+        "name": "Factorial Time",
+        "description": "Extremely inefficient - factorial growth",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 1
+            },
+            {
+                "input_size": 2,
+                "operations": 2
+            },
+            {
+                "input_size": 3,
+                "operations": 6
+            },
+            {
+                "input_size": 4,
+                "operations": 24
+            },
+            {
+                "input_size": 5,
+                "operations": 120
+            },
+            {
+                "input_size": 6,
+                "operations": 720
+            },
+            {
+                "input_size": 7,
+                "operations": 5040
+            },
+            {
+                "input_size": 8,
+                "operations": 40320
+            },
+            {
+                "input_size": 9,
+                "operations": 362880
+            },
+            {
+                "input_size": 10,
+                "operations": 3628800
+            }
+        ]
+    },
+    "o(4^(n*n))": {
+        "name": "Super-Exponential Time",
+        "description": "Explodes even faster than factorial; growth rate of 4^(n²)",
+        "data": [
+            {
+                "input_size": 1,
+                "operations": 4
+            },
+            {
+                "input_size": 2,
+                "operations": 256
+            },
+            {
+                "input_size": 3,
+                "operations": 262144
+            },
+            {
+                "input_size": 4,
+                "operations": 4294967296
+            },
+            {
+                "input_size": 5,
+                "operations": 1.15e15
+            }
+        ]
+    }
+}
