@@ -1,3 +1,4 @@
+from http.server import BaseHTTPRequestHandler
 import os
 import json
 from google import genai
@@ -24,28 +25,17 @@ print(f"API key loaded: {'Yes' if api_key_check else 'No'}")
 if api_key_check:
     print(f"API key starts with: {api_key_check[:10]}...")  # Show first 10 chars for debugging
 
-def handler(request):
-    """Main Vercel serverless function handler"""
-    # Set CORS headers
-    headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Max-Age': '86400',
-        'Content-Type': 'application/json'
-    }
-    
-    try:
-        # Handle preflight CORS requests
-        if request.method == 'OPTIONS':
-            return {
-                'statusCode': 200,
-                'headers': headers,
-                'body': ''
-            }
-        
-        # Handle GET requests for API status
-        if request.method == 'GET':
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        """Handle GET requests for API status"""
+        try:
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            self.end_headers()
+            
             response = {
                 "status": "API is running",
                 "endpoints": [
@@ -55,16 +45,24 @@ def handler(request):
                     "/api/graph-data"
                 ]
             }
-            return {
-                'statusCode': 200,
-                'headers': headers,
-                'body': json.dumps(response)
-            }
-        
-        # Handle POST requests
-        if request.method == 'POST':
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+        except Exception as e:
+            print(f"GET Error: {str(e)}")
+            self.send_error(500, f"Internal server error: {str(e)}")
+    
+    def do_OPTIONS(self):
+        """Handle preflight CORS requests"""
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.end_headers()
+    
+    def do_POST(self):
+        """Handle all POST requests"""
+        try:
             # Parse the request path and normalize it
-            path = request.url.path.strip('/')
+            path = self.path.strip('/')
             
             # Remove 'api/' prefix if present
             if path.startswith('api/'):
@@ -76,23 +74,18 @@ def handler(request):
             print(f"Processing request for path: '{path}'")
             
             # Read request body
-            try:
-                data = json.loads(request.body) if request.body else {}
-            except json.JSONDecodeError:
-                return {
-                    'statusCode': 400,
-                    'headers': headers,
-                    'body': json.dumps({"error": "Invalid JSON in request body"})
-                }
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length > 0:
+                post_data = self.rfile.read(content_length)
+                data = json.loads(post_data.decode('utf-8'))
+            else:
+                data = {}
             
             # Initialize Gemini API
             api_key = os.environ.get('GEMINI_API_KEY')
             if not api_key:
-                return {
-                    'statusCode': 500,
-                    'headers': headers,
-                    'body': json.dumps({"error": "GEMINI_API_KEY not configured"})
-                }
+                self.send_error(500, "GEMINI_API_KEY not configured")
+                return
             
             print(f"Using API key in request: {api_key[:10]}...")
             
@@ -101,241 +94,185 @@ def handler(request):
                 print("Gemini client initialized successfully")
             except Exception as gemini_error:
                 print(f"Gemini initialization error: {str(gemini_error)}")
-                return {
-                    'statusCode': 500,
-                    'headers': headers,
-                    'body': json.dumps({"error": f"Gemini API error: {str(gemini_error)}"})
-                }
+                self.send_error(500, f"Gemini API error: {str(gemini_error)}")
+                return
             
             # Route to appropriate handler
             if path == 'complexity':
-                return handle_complexity(client, data, headers)
+                self.handle_complexity(client, data)
             elif path == 'debug':
-                return handle_debug(client, data, headers)
+                self.handle_debug(client, data)
             elif path == 'create':
-                return handle_create(client, data, headers)
+                self.handle_create(client, data)
             elif path == 'graph-data':
-                return handle_graph_data(client, data, headers)
+                self.handle_graph_data(client, data)
             else:
-                return {
-                    'statusCode': 404,
-                    'headers': headers,
-                    'body': json.dumps({"error": f"Endpoint /{path} not found"})
-                }
-        
-        # Method not allowed
-        return {
-            'statusCode': 405,
-            'headers': headers,
-            'body': json.dumps({"error": "Method not allowed"})
-        }
+                self.send_error(404, f"Endpoint /{path} not found")
                 
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        print(traceback.format_exc())
-        return {
-            'statusCode': 500,
-            'headers': headers,
-            'body': json.dumps({"error": f"Internal server error: {str(e)}"})
-        }
-
-def handle_complexity(client, data, headers):
-    """Handle complexity analysis"""
-    code = data.get('code', '').strip()
-    if not code:
-        return {
-            'statusCode': 400,
-            'headers': headers,
-            'body': json.dumps({"error": "Code is required"})
-        }
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            print(traceback.format_exc())
+            self.send_error(500, f"Internal server error: {str(e)}")
     
-    prompt = f"""
-    Analyze the time and space complexity of the following code snippet. 
-    
-    Format your response as:
-    **Time Complexity:** O(notation)
-    **Space Complexity:** O(notation)
-    
-    Use markdown formatting. Do not include any explanations, reasoning, or additional text.
-    
-    Code to analyze:
-    ```
-    {code}
-    ```
-    """
-    
-    try:
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
-        )
-        analysis = response.text
+    def handle_complexity(self, client, data):
+        """Handle complexity analysis"""
+        code = data.get('code', '').strip()
+        if not code:
+            self.send_error(400, "Code is required")
+            return
         
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({
+        prompt = f"""
+        Analyze the time and space complexity of the following code snippet. 
+        
+        Format your response as:
+        **Time Complexity:** O(notation)
+        **Space Complexity:** O(notation)
+        
+        Use markdown formatting. Do not include any explanations, reasoning, or additional text.
+        
+        Code to analyze:
+        ```
+        {code}
+        ```
+        """
+        
+        try:
+            response = client.models.generate_content(
+                model='gemini-1.5-flash',
+                contents=prompt
+            )
+            analysis = response.text
+            
+            self.send_success({
                 "success": True,
                 "analysis": analysis
             })
-        }
-    except Exception as e:
-        print(f"Complexity analysis error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'headers': headers,
-            'body': json.dumps({"error": f"Complexity analysis failed: {str(e)}"})
-        }
-
-def handle_debug(client, data, headers):
-    """Handle code debugging"""
-    code = data.get('code', '').strip()
-    if not code:
-        return {
-            'statusCode': 400,
-            'headers': headers,
-            'body': json.dumps({"error": "Code is required"})
-        }
+        except Exception as e:
+            print(f"Complexity analysis error: {str(e)}")
+            self.send_error(500, f"Complexity analysis failed: {str(e)}")
     
-    prompt = f"""
-    As a code expert, analyze the following code for bugs, errors, and issues.
-    
-    Format your response with markdown:
-    
-    ### Issues Found:
-    - **Error Type:** Description of the issue
-    
-    ### Suggested Fixes:
-    - **Fix:** Specific solution for each issue
-    
-    ### Improved Code:
-    ```python
-    # Your improved code here
-    ```
-    
-    Use markdown formatting with proper code blocks for code examples.
-    
-    Code to debug:
-    ```
-    {code}
-    ```
-    """
-    
-    try:
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
-        )
-        analysis = response.text
+    def handle_debug(self, client, data):
+        """Handle code debugging"""
+        code = data.get('code', '').strip()
+        if not code:
+            self.send_error(400, "Code is required")
+            return
         
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({
+        prompt = f"""
+        As a code expert, analyze the following code for bugs, errors, and issues.
+        
+        Format your response with markdown:
+        
+        ### Issues Found:
+        - **Error Type:** Description of the issue
+        
+        ### Suggested Fixes:
+        - **Fix:** Specific solution for each issue
+        
+        ### Improved Code:
+        ```python
+        # Your improved code here
+        ```
+        
+        Use markdown formatting with proper code blocks for code examples.
+        
+        Code to debug:
+        ```
+        {code}
+        ```
+        """
+        
+        try:
+            response = client.models.generate_content(
+                model='gemini-1.5-flash',
+                contents=prompt
+            )
+            analysis = response.text
+            
+            self.send_success({
                 "success": True,
                 "analysis": analysis
             })
-        }
-    except Exception as e:
-        print(f"Debug analysis error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'headers': headers,
-            'body': json.dumps({"error": f"Debug analysis failed: {str(e)}"})
-        }
-
-def handle_create(client, data, headers):
-    """Handle code generation"""
-    problem_statement = data.get('problem_statement', '').strip()
-    language = data.get('language', '').strip()
+        except Exception as e:
+            print(f"Debug analysis error: {str(e)}")
+            self.send_error(500, f"Debug analysis failed: {str(e)}")
     
-    if not problem_statement:
-        return {
-            'statusCode': 400,
-            'headers': headers,
-            'body': json.dumps({"error": "Problem statement is required"})
-        }
-    if not language:
-        return {
-            'statusCode': 400,
-            'headers': headers,
-            'body': json.dumps({"error": "Language is required"})
-        }
-    
-    prompt = f"""
-    Generate a {language} code solution for the following problem:
-    
-    Problem: {problem_statement}
-    
-    Format your response with markdown:
-    
-    ### Solution:
-    ```{language}
-    // Your code solution here
-    ```
-    
-    ### Explanation:
-    Brief explanation of the approach
-    
-    ### Complexity:
-    **Time:** O(notation)  
-    **Space:** O(notation)
-    
-    Use proper markdown formatting with code blocks for the solution.
-    """
-    
-    try:
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt
-        )
-        solution = response.text
+    def handle_create(self, client, data):
+        """Handle code generation"""
+        problem_statement = data.get('problem_statement', '').strip()
+        language = data.get('language', '').strip()
         
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({
+        if not problem_statement:
+            self.send_error(400, "Problem statement is required")
+            return
+        if not language:
+            self.send_error(400, "Language is required")
+            return
+        
+        prompt = f"""
+        Generate a {language} code solution for the following problem:
+        
+        Problem: {problem_statement}
+        
+        Format your response with markdown:
+        
+        ### Solution:
+        ```{language}
+        // Your code solution here
+        ```
+        
+        ### Explanation:
+        Brief explanation of the approach
+        
+        ### Complexity:
+        **Time:** O(notation)  
+        **Space:** O(notation)
+        
+        Use proper markdown formatting with code blocks for the solution.
+        """
+        
+        try:
+            response = client.models.generate_content(
+                model='gemini-1.5-flash',
+                contents=prompt
+            )
+            solution = response.text
+            
+            self.send_success({
                 "success": True,
                 "solution": solution
             })
-        }
-    except Exception as e:
-        print(f"Code generation error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'headers': headers,
-            'body': json.dumps({"error": f"Code generation failed: {str(e)}"})
-        }
-
-def handle_graph_data(client, data, headers):
-    """Handle graph data generation"""
-    complexity_type = data.get('complexity_type', '').strip()
-    max_input_size = data.get('max_input_size', 50)
+        except Exception as e:
+            print(f"Code generation error: {str(e)}")
+            self.send_error(500, f"Code generation failed: {str(e)}")
     
-    if not complexity_type:
-        return {
-            'statusCode': 400,
-            'headers': headers,
-            'body': json.dumps({"error": "Complexity type is required"})
-        }
-    
-    try:
-        graph_data = generate_mathematical_data(complexity_type, max_input_size)
-        return {
-            'statusCode': 200,
-            'headers': headers,
-            'body': json.dumps({
+    def handle_graph_data(self, client, data):
+        """Handle graph data generation"""
+        complexity_type = data.get('complexity_type', '').strip()
+        max_input_size = data.get('max_input_size', 50)
+        
+        if not complexity_type:
+            self.send_error(400, "Complexity type is required")
+            return
+        
+        try:
+            graph_data = generate_mathematical_data(complexity_type, max_input_size)
+            self.send_success({
                 "success": True,
                 "data": graph_data
             })
-        }
-    except Exception as e:
-        print(f"Graph data generation error: {str(e)}")
-        return {
-            'statusCode': 500,
-            'headers': headers,
-            'body': json.dumps({"error": f"Graph data generation failed: {str(e)}"})
-        }
+        except Exception as e:
+            print(f"Graph data generation error: {str(e)}")
+            self.send_error(500, f"Graph data generation failed: {str(e)}")
+    
+    def send_success(self, data):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode('utf-8'))
 
 def generate_mathematical_data(complexity_type, max_input_size):
     """Generate mathematical data for complexity graphs"""
