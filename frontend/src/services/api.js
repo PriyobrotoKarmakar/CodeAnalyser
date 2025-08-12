@@ -1,6 +1,6 @@
 // API configuration - automatically detects environment
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-app-name.vercel.app/api'  // Replace with your Vercel URL
+  ? 'https://code-analyser-rho.vercel.app/api'  // Your live Vercel URL
   : 'http://localhost:8000/api';
 
 class ApiService {
