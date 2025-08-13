@@ -67,7 +67,9 @@ export const Card = styled.div`
   }
 `;
 
-export const Button = styled.button`
+export const Button = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['variant', 'size'].includes(prop),
+})`
   display: inline-flex;
   align-items: center;
   justify-content: center;

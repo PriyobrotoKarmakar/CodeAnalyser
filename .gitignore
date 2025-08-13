@@ -48,6 +48,9 @@ yarn-error.log*
 package-lock.json.bak
 yarn.lock.bak
 
+# Root package.json (use frontend/package.json instead)
+/package.json
+
 # React build
 build/
 dist/
@@ -79,6 +82,16 @@ Thumbs.db
 *.temp
 *.bak
 *.backup
+
+# Python backup/temporary files
+*_backup.py
+*_new.py
+tempCodeRunnerFile.py
+index_backup.py
+index_new.py
+
+# Keep local_server.py for development
+# local_server.py - commented out to keep this file
 
 # Logs
 *.log

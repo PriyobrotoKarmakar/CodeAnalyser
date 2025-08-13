@@ -252,7 +252,9 @@ const CustomDropdown = styled.div`
   width: 100%;
 `;
 
-const DropdownButton = styled.button`
+const DropdownButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isOpen'].includes(prop),
+})`
   width: 100%;
   padding: 0.875rem 1rem;
   background: ${props => props.theme.name === 'dark' 
@@ -311,7 +313,9 @@ const DropdownButton = styled.button`
   }
 `;
 
-const DropdownList = styled.div`
+const DropdownList = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isOpen'].includes(prop),
+})`
   position: absolute;
   top: 100%;
   left: 0;
@@ -355,7 +359,9 @@ const DropdownList = styled.div`
   }
 `;
 
-const DropdownItem = styled.button`
+const DropdownItem = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['isSelected'].includes(prop),
+})`
   width: 100%;
   padding: 0.75rem 1rem;
   background: transparent;
@@ -434,13 +440,13 @@ const CreateSection = () => {
       const response = await apiService.createCode({ prompt, language });
       console.log('Create API Response:', response); // Debug log
       console.log('Response type:', typeof response); // Debug log
-      console.log('Generated code:', response?.generated_code); // Debug log
-      console.log('Generated code type:', typeof response?.generated_code); // Debug log
+      console.log('Solution field:', response?.solution); // Debug log
+      console.log('Solution type:', typeof response?.solution); // Debug log
       
-      // The response should have generated_code field
-      if (response && response.generated_code && typeof response.generated_code === 'string') {
-        console.log('Setting result to:', response.generated_code); // Debug log
-        setResult(response.generated_code);
+      // The API returns { success: true, solution: "..." }
+      if (response && response.success && response.solution && typeof response.solution === 'string') {
+        console.log('Setting result to:', response.solution); // Debug log
+        setResult(response.solution);
         // Auto-scroll to results section after a short delay
         setTimeout(() => {
           if (resultsRef.current) {
@@ -464,7 +470,7 @@ const CreateSection = () => {
         }, 300);
       } else {
         console.error('Unexpected response structure:', response);
-        console.error('Generated code field:', response?.generated_code);
+        console.error('Solution field:', response?.solution);
         setError('Received invalid response format from server. Check console for details.');
       }
     } catch (err) {

@@ -2,9 +2,9 @@ import os
 import json
 from google import genai
 import traceback
-import urllib.parse
 import math
 import random
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # Load environment variables from .env file for local development
 try:
@@ -25,9 +25,7 @@ print(f"API key loaded: {'Yes' if api_key_check else 'No'}")
 if api_key_check:
     print(f"API key starts with: {api_key_check[:10]}...")  # Show first 10 chars for debugging
 
-from http.server import BaseHTTPRequestHandler
-
-class handler(BaseHTTPRequestHandler):
+class LocalAPIHandler(BaseHTTPRequestHandler):
     def _set_cors_headers(self):
         """Set CORS headers for all responses"""
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -143,15 +141,18 @@ class handler(BaseHTTPRequestHandler):
         
         try:
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model='gemini-1.5-flash',
                 contents=prompt
             )
+            analysis = response.text
+            
             self._send_success({
-                'success': True,
-                'analysis': response.text
+                "success": True,
+                "analysis": analysis
             })
         except Exception as e:
-            self._send_error(500, f"Error analyzing code: {str(e)}")
+            print(f"Complexity analysis error: {str(e)}")
+            self._send_error(500, f"Complexity analysis failed: {str(e)}")
     
     def _handle_debug(self, client, data):
         """Handle code debugging"""
@@ -186,15 +187,18 @@ class handler(BaseHTTPRequestHandler):
         
         try:
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model='gemini-1.5-flash',
                 contents=prompt
             )
+            analysis = response.text
+            
             self._send_success({
-                'success': True,
-                'debug_report': response.text
+                "success": True,
+                "analysis": analysis
             })
         except Exception as e:
-            self._send_error(500, f"Error debugging code: {str(e)}")
+            print(f"Debug analysis error: {str(e)}")
+            self._send_error(500, f"Debug analysis failed: {str(e)}")
     
     def _handle_create(self, client, data):
         """Handle code generation"""
@@ -205,7 +209,7 @@ class handler(BaseHTTPRequestHandler):
             self._send_error(400, "Problem statement is required")
             return
         if not language:
-            self._send_error(400, "Programming language is required")
+            self._send_error(400, "Language is required")
             return
         
         prompt = f"""
@@ -232,16 +236,18 @@ class handler(BaseHTTPRequestHandler):
         
         try:
             response = client.models.generate_content(
-                model="gemini-2.5-flash",
+                model='gemini-1.5-flash',
                 contents=prompt
             )
+            solution = response.text
+            
             self._send_success({
-                'success': True,
-                'generated_code': response.text,
-                'language': language
+                "success": True,
+                "solution": solution
             })
         except Exception as e:
-            self._send_error(500, f"Error generating code: {str(e)}")
+            print(f"Code generation error: {str(e)}")
+            self._send_error(500, f"Code generation failed: {str(e)}")
     
     def _handle_graph_data(self, client, data):
         """Handle graph data generation"""
@@ -252,16 +258,17 @@ class handler(BaseHTTPRequestHandler):
             self._send_error(400, "Complexity type is required")
             return
         
-        # Generate fallback data mathematically (more reliable than AI for graph data)
-        graph_data = generate_mathematical_data(complexity_type, max_input_size)
-        
-        self._send_success({
-            'success': True,
-            'graph_data': graph_data
-        })
+        try:
+            graph_data = generate_mathematical_data(complexity_type, max_input_size)
+            self._send_success({
+                "success": True,
+                "data": graph_data
+            })
+        except Exception as e:
+            print(f"Graph data generation error: {str(e)}")
+            self._send_error(500, f"Graph data generation failed: {str(e)}")
     
     def _send_success(self, data):
-        """Send successful JSON response"""
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self._set_cors_headers()
@@ -269,34 +276,27 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(data).encode('utf-8'))
     
     def _send_error(self, status_code, message):
-        """Send error JSON response"""
         self.send_response(status_code)
         self.send_header('Content-Type', 'application/json')
         self._set_cors_headers()
         self.end_headers()
-        error_response = {'error': message}
+        error_response = {"error": message}
         self.wfile.write(json.dumps(error_response).encode('utf-8'))
 
 def generate_mathematical_data(complexity_type, max_input_size):
     """Generate mathematical data for complexity graphs"""
     data = []
     for n in range(1, max_input_size + 1):
-        if 'constant' in complexity_type.lower() or 'o(1)' in complexity_type.lower():
+        if 'o(1)' in complexity_type.lower() or 'constant' in complexity_type.lower():
             operations = 1 + random.uniform(-0.1, 0.1)
-        elif '!' in complexity_type.lower() or 'factorial' in complexity_type.lower():
-            if n <= 7:
-                operations = math.factorial(n) / 100 + random.uniform(-n*0.1, n*0.1)
-            else:
-                operations = (2 ** (n-3)) * 6 + random.uniform(-n*10, n*10)
-            operations = max(1, operations)
-        elif 'log' in complexity_type.lower() and 'nlog' not in complexity_type.lower():
+        elif 'o(log' in complexity_type.lower() or 'logarithmic' in complexity_type.lower():
             operations = math.log2(n) + random.uniform(-0.5, 0.5)
-        elif 'nlog' in complexity_type.lower() or 'n log' in complexity_type.lower():
-            operations = n * math.log2(n) + random.uniform(-n*0.1, n*0.1)
-        elif 'n^2' in complexity_type.lower() or 'n²' in complexity_type.lower() or 'quadratic' in complexity_type.lower():
+        elif 'o(n²)' in complexity_type.lower() or 'o(n^2)' in complexity_type.lower() or 'quadratic' in complexity_type.lower():
             operations = n * n + random.uniform(-n, n)
-        elif 'n^3' in complexity_type.lower() or 'cubic' in complexity_type.lower():
-            operations = n * n * n + random.uniform(-n*n*0.1, n*n*0.1)
+        elif 'o(n³)' in complexity_type.lower() or 'o(n^3)' in complexity_type.lower() or 'cubic' in complexity_type.lower():
+            operations = n * n * n + random.uniform(-n*n, n*n)
+        elif 'o(n log n)' in complexity_type.lower() or 'linearithmic' in complexity_type.lower():
+            operations = n * math.log2(n) + random.uniform(-n/2, n/2)
         elif '2^n' in complexity_type.lower() or 'exponential' in complexity_type.lower():
             operations = 2 ** min(n, 20) + random.uniform(-10, 10)
         else:  # linear or default
@@ -309,42 +309,20 @@ def generate_mathematical_data(complexity_type, max_input_size):
     
     return data
 
-# Vercel serverless function entry point
-def handler_func(request, response):
-    """Vercel serverless function handler"""
-    # Create a mock HTTP request/response for the handler
-    from io import StringIO
-    import sys
-    
-    # Redirect stdout to capture prints
-    old_stdout = sys.stdout
-    sys.stdout = StringIO()
+if __name__ == "__main__":
+    port = 8000
+    server = HTTPServer(('localhost', port), LocalAPIHandler)
+    print(f"🚀 Local API server running at http://localhost:{port}")
+    print(f"📋 API Status: http://localhost:{port}/api/")
+    print(f"🔧 API Endpoints:")
+    print(f"   POST http://localhost:{port}/api/complexity")
+    print(f"   POST http://localhost:{port}/api/debug")
+    print(f"   POST http://localhost:{port}/api/create")
+    print(f"   POST http://localhost:{port}/api/graph-data")
+    print(f"💡 Press Ctrl+C to stop the server")
     
     try:
-        # Create handler instance
-        http_handler = handler()
-        http_handler.setup()
-        
-        # Set request attributes
-        http_handler.path = request.path if hasattr(request, 'path') else request.url.path
-        http_handler.command = request.method
-        http_handler.headers = request.headers
-        
-        # Handle different HTTP methods
-        if request.method == 'GET':
-            http_handler.do_GET()
-        elif request.method == 'POST':
-            http_handler.do_POST()
-        elif request.method == 'OPTIONS':
-            http_handler.do_OPTIONS()
-            
-        return response
-        
-    except Exception as e:
-        print(f"Handler error: {str(e)}")
-        response.status_code = 500
-        response.headers['Content-Type'] = 'application/json'
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
-    finally:
-        sys.stdout = old_stdout
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print(f"\n🛑 Server stopped")
+        server.server_close()

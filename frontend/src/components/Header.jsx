@@ -123,7 +123,9 @@ const Navigation = styled.nav`
   backdrop-filter: blur(15px);
 `;
 
-const NavButton = styled.button`
+const NavButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['active'].includes(prop),
+})`
   display: flex;
   align-items: center;
   gap: 0.5rem;

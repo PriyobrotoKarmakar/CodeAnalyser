@@ -282,7 +282,9 @@ const TabContainer = styled.div`
   gap: 0.5rem;
 `;
 
-const Tab = styled.button`
+const Tab = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['active'].includes(prop),
+})`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -321,7 +323,9 @@ const CodeContainer = styled.div`
   overflow: hidden;
 `;
 
-const CodeEditor = styled.textarea`
+const CodeEditor = styled.textarea.withConfig({
+  shouldForwardProp: (prop) => !['isVisible'].includes(prop),
+})`
   position: absolute;
   top: 0;
   left: 0;
@@ -371,7 +375,9 @@ const CodeEditor = styled.textarea`
   }
 `;
 
-const CodePreview = styled.div`
+const CodePreview = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isVisible'].includes(prop),
+})`
   position: absolute;
   top: 0;
   left: 0;
@@ -491,13 +497,14 @@ const ComplexitySection = () => {
       const response = await apiService.analyzeComplexity(code);
       console.log('Complexity API Response:', response); // Debug log
       
-      // The response should have analysis field
-      if (response && response.analysis) {
+      // The API returns { success: true, analysis: "..." }
+      if (response && response.success && response.analysis) {
         setResult(response.analysis);
       } else if (typeof response === 'string') {
         setResult(response);
       } else {
         console.error('Unexpected response structure:', response);
+        console.error('Expected analysis field, got:', response);
         setError('Received invalid response format from server');
       }
     } catch (err) {

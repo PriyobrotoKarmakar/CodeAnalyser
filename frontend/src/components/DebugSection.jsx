@@ -280,7 +280,9 @@ const TabContainer = styled.div`
   gap: 0.5rem;
 `;
 
-const Tab = styled.button`
+const Tab = styled.button.withConfig({
+  shouldForwardProp: (prop) => !['active'].includes(prop),
+})`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -319,7 +321,9 @@ const CodeContainer = styled.div`
   overflow: hidden;
 `;
 
-const CodeEditor = styled.textarea`
+const CodeEditor = styled.textarea.withConfig({
+  shouldForwardProp: (prop) => !['isVisible'].includes(prop),
+})`
   position: absolute;
   top: 0;
   left: 0;
@@ -369,7 +373,9 @@ const CodeEditor = styled.textarea`
   }
 `;
 
-const CodePreview = styled.div`
+const CodePreview = styled.div.withConfig({
+  shouldForwardProp: (prop) => !['isVisible'].includes(prop),
+})`
   position: absolute;
   top: 0;
   left: 0;
@@ -479,9 +485,9 @@ const DebugSection = () => {
       const response = await apiService.debugCode(code);
       console.log('Debug API Response:', response); // Debug log
       
-      // The response should have debug_report field
-      if (response && response.debug_report) {
-        setResult(response.debug_report);
+      // The API returns { success: true, analysis: "..." }
+      if (response && response.success && response.analysis) {
+        setResult(response.analysis);
         // Auto-scroll to results section after a short delay
         setTimeout(() => {
           if (resultsSectionRef.current) {
@@ -504,6 +510,7 @@ const DebugSection = () => {
         }, 300);
       } else {
         console.error('Unexpected response structure:', response);
+        console.error('Expected analysis field, got:', response);
         setError('Received invalid response format from server');
       }
     } catch (err) {
