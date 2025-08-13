@@ -26,6 +26,19 @@ if api_key_check:
     print(f"API key starts with: {api_key_check[:10]}...")  # Show first 10 chars for debugging
 
 class handler(BaseHTTPRequestHandler):
+    def _set_cors_headers(self):
+        """Set CORS headers for all responses"""
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.send_header('Access-Control-Max-Age', '86400')
+    
+    def do_OPTIONS(self):
+        """Handle preflight CORS requests"""
+        self.send_response(200)
+        self._set_cors_headers()
+        self.end_headers()
+    
     def do_GET(self):
         """Handle GET requests for API status"""
         try:
