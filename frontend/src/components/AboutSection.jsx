@@ -51,32 +51,17 @@ const ProfileSection = styled.div`
   }
 `;
 
-const ProfileImage = styled.div`
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #8a2be2, #4b0082);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
+const ProfileImage = styled.img`
+  width: 165px;
+  height: 220px;
+  border-radius: 12px;
+  @media (max-width: 768px) {
+    width: 120px;
+    height: 120px;
+  }
+  object-fit: cover;
   box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 3px;
-    border-radius: 50%;
-    background: ${props => props.theme.name === 'dark' 
-      ? 'rgba(0, 0, 0, 0.5)' 
-      : 'rgba(255, 255, 255, 0.1)'};
-  }
-
-  span {
-    position: relative;
-    z-index: 1;
-  }
+  border: 4px solid #8a2be2;
 `;
 
 const ProfileInfo = styled.div`
@@ -108,9 +93,11 @@ const Description = styled.div`
   line-height: 1.6;
   color: ${props => props.theme.name === 'dark' ? '#e0e0e0' : '#333'};
   margin-bottom: 2rem;
+  text-align: justify;
 
   p {
     margin-bottom: 1rem;
+    text-align: justify;
   }
 `;
 
@@ -188,21 +175,61 @@ const SocialLink = styled.a`
   }
 `;
 
+const FeedbackForm = () => {
+  const [rating, setRating] = React.useState(0);
+  const [hover, setHover] = React.useState(0);
+  return (
+    <form action="https://formspree.io/f/mblkbeyp" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', alignItems: 'stretch', maxWidth: 420, margin: '0 auto' }}>
+      <input name="name" type="text" placeholder="Your name" style={{ width: '100%', borderRadius: 12, padding: '0.75rem 1rem', border: '1.5px solid #8a2be2', fontSize: '1rem', background: '#fff', boxShadow: '0 2px 8px rgba(138,43,226,0.04)' }} required />
+      <div style={{ width: '100%', textAlign: 'left', marginBottom: '0.5rem' }}>
+        <label style={{ fontWeight: 600, marginBottom: 6, display: 'block', fontSize: '1rem' }}>Rating:</label>
+        <div style={{ display: 'flex', gap: 8, margin: '6px 0' }}>
+          {[1,2,3,4,5].map(star => (
+            <span
+              key={star}
+              style={{
+                fontSize: 28,
+                color: (hover || rating) >= star ? '#FFD700' : '#ccc',
+                filter: (hover || rating) >= star ? 'drop-shadow(0 1px 2px #8a2be2)' : 'none',
+                cursor: 'pointer',
+                transition: 'color 0.2s',
+              }}
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => setRating(star)}
+            >★</span>
+          ))}
+        </div>
+        <input type="hidden" name="rating" value={rating} required />
+      </div>
+  <textarea name="feedback" rows="4" placeholder="Your feedback..." style={{ width: '100%', borderRadius: 12, padding: '0.75rem 1rem', border: '1.5px solid #8a2be2', fontSize: '1rem', background: '#fff', boxShadow: '0 2px 8px rgba(138,43,226,0.04)' }} required />
+      <button type="submit" style={{ background: 'linear-gradient(90deg,#8a2be2,#4b0082)', color: 'white', border: 'none', borderRadius: 12, padding: '0.75rem 2rem', fontWeight: 600, fontSize: '1rem', cursor: 'pointer', marginTop: 8, boxShadow: '0 2px 8px rgba(138,43,226,0.08)', transition: 'background 0.2s' }}>Submit</button>
+    </form>
+  );
+};
+
 const AboutSection = () => {
   return (
     <AboutContainer>
       <AboutCard>
         <ProfileSection>
-          <ProfileImage>
-            <span>🧑🏻‍🦱</span>
-          </ProfileImage>
+          <ProfileImage src="/Priyobroto_Karmakar.jpg" alt="Priyobroto Karmakar" />
           <ProfileInfo>
-            <Title>Code Analyzer</Title>
-            <Subtitle>Advanced Code Analysis & Generation Tool</Subtitle>
+            <Title>Priyobroto Karmakar</Title>
+            <Subtitle>Creator of Code Analyzer</Subtitle>
+            <SocialLinks style={{ justifyContent: 'flex-start', margin: '1rem 0' }}>
+              <SocialLink href="https://github.com/PriyobrotoKarmakar" target="_blank" rel="noopener noreferrer">
+                <Github size={18} />
+                GitHub
+              </SocialLink>
+              <SocialLink href="https://www.linkedin.com/in/priyobroto-karmakar/" target="_blank" rel="noopener noreferrer">
+                <img src="/Priyobroto_Karmakar.jpg" alt="LinkedIn" style={{ width: 18, height: 18, borderRadius: '50%' }} />
+                LinkedIn
+              </SocialLink>
+            </SocialLinks>
             <Description>
               <p>
-                Welcome to Code Analyzer! This powerful tool helps developers understand, 
-                debug, and create better code through advanced analysis and AI-powered assistance.
+                Welcome to Code Analyzer! This interactive web app helps you visualize, debug, and understand code complexity with modern UI and real-time feedback. Built for students, educators, and developers who want to explore algorithms and code performance in a fun, intuitive way.
               </p>
             </Description>
           </ProfileInfo>
@@ -245,23 +272,19 @@ const AboutSection = () => {
 
         <Description>
           <p>
-            Built with modern web technologies including React, Django, and powered by 
-            advanced AI models to provide you with the best coding experience. Whether 
-            you're a beginner learning algorithms or an experienced developer optimizing 
-            performance, this tool is designed to help you succeed.
+            Built with React, Vite, and modern JavaScript, Code Analyzer offers interactive visualizations, code input, and debugging tools. Whether you're learning algorithms, preparing for interviews, or just curious about how your code performs, this tool is designed to help you succeed and grow as a developer.
           </p>
         </Description>
 
-        <SocialLinks>
-          <SocialLink href="#" target="_blank" rel="noopener noreferrer">
-            <Github size={18} />
-            GitHub
-          </SocialLink>
-          <SocialLink href="#" target="_blank" rel="noopener noreferrer">
-            <Heart size={18} />
-            Support
-          </SocialLink>
-        </SocialLinks>
+  {/* Social links removed from bottom. Only feedback section remains below features. */}
+
+        <FeatureCard style={{ marginTop: '2rem', textAlign: 'center', background: 'rgba(138,43,226,0.08)', boxShadow: '0 4px 24px rgba(138,43,226,0.08)' }}>
+          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.3rem', fontWeight: 700 }}>Feedback</h3>
+          <p style={{ marginBottom: '1.5rem', color: '#666', fontSize: '1rem' }}>We value your feedback! Please share your thoughts, suggestions, or issues below:</p>
+          {/* Interactive feedback form with rating and file preview */}
+          <FeedbackForm />
+        </FeatureCard>
+
       </AboutCard>
     </AboutContainer>
   );
