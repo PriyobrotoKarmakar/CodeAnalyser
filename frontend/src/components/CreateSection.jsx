@@ -9,9 +9,9 @@ import PlanetModel from './PlanetModel.jsx';
 
 const SectionContainer = styled.div`
   display: grid;
-  gap: 2rem;
+  gap: 1.2rem;
   grid-template-columns: 1fr;
-
+    margin-top: 0.2rem;
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 1fr;
   }
@@ -85,6 +85,10 @@ const SplineSection = styled.div`
   * {
     background: transparent;
     box-shadow: none;
+  }
+  
+  @media (max-width: 768px) {
+    display: none;
   }
   
   @media (min-width: 1024px) {

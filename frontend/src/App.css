@@ -13,8 +13,14 @@
   }
 }
 
-.App-header {
+body, #root, .App {
+  min-height: 100vh;
+  width: 100vw;
   background-color: #282c34;
+}
+.App-header {
+  /* Remove background, let body show gradient */
+  background: none;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

@@ -9,23 +9,13 @@ import Spline from '@splinetool/react-spline';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-const DebugContainer = styled.div`
-  min-height: ${props => props.hasContent ? '100vh' : 'auto'};
-`;
-
-const ContentOverlay = styled.div`
-  margin: 0 auto;
-  max-width: 1200px;
-  padding: 0 2rem;
-`;
-
 const SectionContainer = styled.div`
   display: grid;
-  gap: 2rem;
+  gap: 1.2rem;
   grid-template-columns: 1fr;
-
+    margin-top: 1.2rem;
   @media (min-width: 1024px) {
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 `;
 
@@ -78,8 +68,6 @@ const InputSection = styled(Card)`
       '0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9)'
     };
   }
-    };
-  }
 `;
 
 const SplineSection = styled.div`
@@ -88,6 +76,10 @@ const SplineSection = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
   
   @media (max-width: 1024px) {
     height: 400px;
@@ -522,106 +514,101 @@ const DebugSection = () => {
   };
 
   return (
-    <DebugContainer hasContent={!!(result || error)}>
-      <ContentOverlay theme={theme}>
-        <SectionContainer>
-          <SplineSection theme={theme}>
-            <Spline scene="https://prod.spline.design/lNpFtvX044HNCIuq/scene.splinecode" />
-          </SplineSection>
-
-          <InputSection>
-            <SectionTitle>
-              <Bug size={24} />
-              Input Code
-            </SectionTitle>
-            
-            <FormGroup>
-              <Label>Paste your code here:</Label>
-              <CodeInputContainer theme={theme}>
-                <CodeInputHeader theme={theme}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Code2 size={16} />
-                    Code Input
-                  </div>
-                  <TabContainer>
-                    <Tab 
-                      active={!isPreviewMode} 
-                      onClick={() => setIsPreviewMode(false)}
-                      theme={theme}
-                    >
-                      <Edit3 size={14} />
-                      Editor
-                    </Tab>
-                    <Tab 
-                      active={isPreviewMode} 
-                      onClick={() => setIsPreviewMode(true)}
-                      theme={theme}
-                      disabled={!code.trim()}
-                    >
-                      <Eye size={14} />
-                      Preview
-                    </Tab>
-                  </TabContainer>
-                </CodeInputHeader>
-                
-                <CodeContainer>
-                  <CodeEditor
+    <div>
+      <SectionContainer>
+        <SplineSection theme={theme}>
+          <Spline scene="https://prod.spline.design/lNpFtvX044HNCIuq/scene.splinecode" />
+        </SplineSection>
+        <InputSection>
+          <SectionTitle>
+            <Bug size={24} />
+            Debug Code
+          </SectionTitle>
+          <FormGroup>
+            <Label>Paste your code here:</Label>
+            <CodeInputContainer theme={theme}>
+              <CodeInputHeader theme={theme}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Code2 size={16} />
+                  Debug Code
+                </div>
+                <TabContainer>
+                  <Tab 
+                    active={!isPreviewMode} 
+                    onClick={() => setIsPreviewMode(false)}
                     theme={theme}
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="// Enter your code here..."
-                    spellCheck={false}
-                    isVisible={!isPreviewMode}
-                  />
-                  <CodePreview
-                    theme={theme}
-                    isVisible={isPreviewMode}
                   >
-                    {code ? (
-                      <SyntaxHighlighter
-                        language={detectLanguage(code)}
-                        style={theme.name === 'dark' ? oneDark : oneLight}
-                        customStyle={{
-                          margin: 0,
-                          borderRadius: 0,
-                          background: 'transparent',
-                          height: '100%',
-                          padding: '1rem',
-                        }}
-                        className="syntax-highlighter"
-                        showLineNumbers={true}
-                        wrapLines={true}
-                      >
-                        {code}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <div style={{ 
-                        padding: '1rem', 
-                        color: '#666', 
-                        fontStyle: 'italic',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%'
-                      }}>
-                        No code to preview...
-                      </div>
-                    )}
-                  </CodePreview>
-                </CodeContainer>
-              </CodeInputContainer>
-            </FormGroup>
-
-            <Button 
-              onClick={handleSubmit} 
-              disabled={isLoading || !code.trim()}
-              variant="primary"
-            >
-              {isLoading ? <LoadingSpinner /> : <Send size={20} />}
-              {isLoading ? 'Debugging...' : 'Debug Code'}
-            </Button>
-          </InputSection>
-        </SectionContainer>
+                    <Edit3 size={14} />
+                    Editor
+                  </Tab>
+                  <Tab 
+                    active={isPreviewMode} 
+                    onClick={() => setIsPreviewMode(true)}
+                    theme={theme}
+                    disabled={!code.trim()}
+                  >
+                    <Eye size={14} />
+                    Preview
+                  </Tab>
+                </TabContainer>
+              </CodeInputHeader>
+              <CodeContainer>
+                <CodeEditor
+                  theme={theme}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="// Enter your code here..."
+                  spellCheck={false}
+                  isVisible={!isPreviewMode}
+                />
+                <CodePreview
+                  theme={theme}
+                  isVisible={isPreviewMode}
+                >
+                  {code ? (
+                    <SyntaxHighlighter
+                      language={detectLanguage(code)}
+                      style={theme.name === 'dark' ? oneDark : oneLight}
+                      customStyle={{
+                        margin: 0,
+                        borderRadius: 0,
+                        background: 'transparent',
+                        height: '100%',
+                        padding: '1rem',
+                      }}
+                      className="syntax-highlighter"
+                      showLineNumbers={true}
+                      wrapLines={true}
+                    >
+                      {code}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <div style={{ 
+                      padding: '1rem', 
+                      color: '#666', 
+                      fontStyle: 'italic',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%'
+                    }}>
+                      No code to preview...
+                    </div>
+                  )}
+                </CodePreview>
+              </CodeContainer>
+            </CodeInputContainer>
+          </FormGroup>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isLoading || !code.trim()}
+            variant="primary"
+          >
+            {isLoading ? <LoadingSpinner /> : <Send size={20} />}
+            {isLoading ? 'Debugging...' : 'Debug Code'}
+          </Button>
+        </InputSection>
+      </SectionContainer>
 
         {/* Results section that appears below and auto-scrolls into view */}
         {(result || error) && (
@@ -648,9 +635,8 @@ const DebugSection = () => {
             </OutputSection>
           </ResultsSection>
         )}
-      </ContentOverlay>
-    </DebugContainer>
-  );
-};
+      </div>
+    );
+  };
 
-export default DebugSection;
+  export default DebugSection;

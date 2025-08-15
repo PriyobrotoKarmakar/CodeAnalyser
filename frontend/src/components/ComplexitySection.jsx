@@ -13,9 +13,9 @@ import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/pris
 
 const SectionContainer = styled.div`
   display: grid;
-  gap: 2rem;
+  gap: 1.2rem;
   grid-template-columns: 1fr;
-
+    margin-top: 1.2rem;
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 1fr;
   }
@@ -74,6 +74,10 @@ const InputSection = styled(Card)`
 
 const SplineSection = styled.div`
   height: fit-content;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const ResultsSection = styled.div`

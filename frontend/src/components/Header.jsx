@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Code2, Zap, Bug, Plus, TestTube } from 'lucide-react';
+import { Code2, Zap, Bug, Plus, Menu, X } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const HeaderContainer = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 0;
-  margin-bottom: 1.5rem;
+  padding: 1rem 0;
+  margin-bottom: 0.5rem;
   position: relative;
+  z-index: 100; /* Ensure header is above other content */
 `;
 
 const GlassContainer = styled.div`
@@ -17,9 +18,9 @@ const GlassContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: ${props => props.theme.name === 'dark' 
-    ? 'rgba(255, 255, 255, 0.05)' 
-    : 'rgba(255, 255, 255, 0.1)'};
+  background: ${props => props.theme.isDark
+    ? `linear-gradient(45deg, rgba(138, 43, 226, 0.15), rgba(75, 0, 130, 0.1), rgba(30, 144, 255, 0.15), rgba(138, 43, 226, 0.1))`
+    : `linear-gradient(45deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.05), rgba(30, 144, 255, 0.1), rgba(138, 43, 226, 0.05))`};
   backdrop-filter: blur(20px);
   border: 1px solid ${props => props.theme.name === 'dark' 
     ? 'rgba(255, 255, 255, 0.1)' 
@@ -34,34 +35,8 @@ const GlassContainer = styled.div`
       : 'rgba(255, 255, 255, 0.2)'};
   min-width: 800px;
   position: relative;
-  overflow: hidden;
+  /* Removed overflow: hidden to allow mobile menu to show */
   
-  /* Animated gradient background */
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: ${props => props.theme.name === 'dark' 
-      ? `linear-gradient(
-          45deg,
-          rgba(138, 43, 226, 0.15),
-          rgba(75, 0, 130, 0.1),
-          rgba(30, 144, 255, 0.15),
-          rgba(138, 43, 226, 0.1)
-        )`
-      : `linear-gradient(
-          45deg,
-          rgba(138, 43, 226, 0.1),
-          rgba(75, 0, 130, 0.05),
-          rgba(30, 144, 255, 0.1),
-          rgba(138, 43, 226, 0.05)
-        )`};
-   
-    z-index: -1;
-  }
   
   @keyframes liquidMove {
     0%, 100% {
@@ -109,7 +84,9 @@ const LogoIcon = styled.div`
   box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
 `;
 
-const Navigation = styled.nav`
+const Navigation = styled.nav.withConfig({
+  shouldForwardProp: (prop) => prop !== 'mobileOpen'
+})`
   display: flex;
   gap: 0.5rem;
   background: ${props => props.theme.name === 'dark' 
@@ -121,6 +98,92 @@ const Navigation = styled.nav`
     ? 'rgba(255, 255, 255, 0.25)' 
     : 'rgba(255, 255, 255, 0.1)'};
   backdrop-filter: blur(15px);
+
+  @media (max-width: 768px) {
+    display: ${props => props.mobileOpen ? 'flex' : 'none'};
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    margin-top: 0.5rem;
+    background: ${props => props.theme.name === 'dark' 
+      ? 'rgba(0, 0, 0, 0.95)' 
+      : 'rgba(255, 255, 255, 0.95)'};
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    padding: 1rem;
+    backdrop-filter: blur(20px);
+  }
+`;
+
+const DesktopActions = styled.div`
+  display: flex;
+  align-items: center;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileActions = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid ${props => props.theme.name === 'dark' 
+      ? 'rgba(255, 255, 255, 0.1)' 
+      : 'rgba(0, 0, 0, 0.1)'};
+    margin-top: 1rem;
+  }
+`;
+
+const MobileActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  background: transparent;
+  color: ${props => props.theme.name === 'dark' ? '#e0e0e0' : '#555555'};
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: ${props => props.theme.name === 'dark' 
+      ? 'rgba(255, 255, 255, 0.1)' 
+      : 'rgba(0, 0, 0, 0.1)'};
+  }
+`;
+
+const MobileMenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${props => props.theme.name === 'dark' ? '#ffffff' : '#1a1a1a'};
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: ${props => props.theme.name === 'dark' 
+      ? 'rgba(255, 255, 255, 0.1)' 
+      : 'rgba(0, 0, 0, 0.1)'};
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const NavButton = styled.button.withConfig({
@@ -181,6 +244,14 @@ const NavButton = styled.button.withConfig({
 
   &:active {
     transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
   }
 `;
 
@@ -298,12 +369,18 @@ const AboutButton = styled.button`
 
 const Header = ({ activeSection, setActiveSection }) => {
   const { theme, toggleTheme } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const sections = [
     { id: 'complexity', label: 'Complexity', icon: Zap },
     { id: 'debug', label: 'Debug', icon: Bug },
     { id: 'create', label: 'Create', icon: Plus },
   ];
+
+  const handleNavClick = (sectionId) => {
+    setActiveSection(sectionId);
+    setMobileMenuOpen(false); // Close mobile menu when item is selected
+  };
 
   return (
     <HeaderContainer>
@@ -315,27 +392,53 @@ const Header = ({ activeSection, setActiveSection }) => {
           <span>Code Analyzer</span>
         </Logo>
 
-        <Navigation>
+        <MobileMenuButton 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          theme={theme}
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </MobileMenuButton>
+
+        <Navigation mobileOpen={mobileMenuOpen} theme={theme}>
           {sections.map(({ id, label, icon: Icon }) => (
             <NavButton
               key={id}
               active={activeSection === id}
-              onClick={() => setActiveSection(id)}
+              onClick={() => handleNavClick(id)}
+              theme={theme}
             >
               <Icon size={14} />
               {label}
             </NavButton>
           ))}
+          
+          <MobileActions theme={theme}>
+            <MobileActionButton 
+              onClick={() => handleNavClick('about')}
+              theme={theme}
+            >
+              <span>About</span>
+              <span>🧑🏻‍🦱</span>
+            </MobileActionButton>
+            
+            <MobileActionButton 
+              onClick={toggleTheme}
+              theme={theme}
+            >
+              <span>Theme</span>
+              <span>{theme.name === 'light' ? '🌙' : '☀️'}</span>
+            </MobileActionButton>
+          </MobileActions>
         </Navigation>
 
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <AboutButton onClick={() => setActiveSection('about')}>
+        <DesktopActions>
+          <AboutButton onClick={() => handleNavClick('about')}>
             🧑🏻‍🦱
           </AboutButton>
           <ThemeToggle onClick={toggleTheme}>
             {theme.name === 'light' ? '🌙' : '☀️'}
           </ThemeToggle>
-        </div>
+        </DesktopActions>
       </GlassContainer>
     </HeaderContainer>
   );
