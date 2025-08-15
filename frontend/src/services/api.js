@@ -1,7 +1,7 @@
 // API configuration - automatically detects environment
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://code-analyser-rho.vercel.app/api'  // Your live Vercel URL
-  : 'http://localhost:8000';  // Local API server
+  ? '/api'  // Same domain - no CORS needed!
+  : 'http://localhost:3000';  // Local development server
 
 class ApiService {
   async request(endpoint, options = {}) {
