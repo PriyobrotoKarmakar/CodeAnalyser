@@ -26,21 +26,21 @@ class ApiService {
   }
 
   async analyzeComplexity(code) {
-    return this.request('/api/complexity', {
+    return this.request('/complexity', {
       method: 'POST',
       body: JSON.stringify({ code }),
     });
   }
 
   async debugCode(code) {
-    return this.request('/api/debug', {
+    return this.request('/debug', {
       method: 'POST',
       body: JSON.stringify({ code }),
     });
   }
 
   async createCode(params) {
-    return this.request('/api/create', {
+    return this.request('/create', {
       method: 'POST',
       body: JSON.stringify({ 
         problem_statement: params.prompt, 
@@ -50,7 +50,7 @@ class ApiService {
   }
 
   async getComplexityGraphData(complexityType, maxInputSize = 50) {
-    return this.request('/api/graph-data', {
+    return this.request('/graph-data', {
       method: 'POST',
       body: JSON.stringify({ 
         complexity_type: complexityType, 
