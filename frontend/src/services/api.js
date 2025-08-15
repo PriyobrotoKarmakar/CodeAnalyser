@@ -1,7 +1,7 @@
 // API configuration - automatically detects environment
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? 'https://code-analyser-rho.vercel.app/api'  // Your live Vercel URL
-  : 'http://localhost:8000/api';
+  : 'http://localhost:8000';  // Local API server
 
 class ApiService {
   async request(endpoint, options = {}) {
@@ -26,21 +26,21 @@ class ApiService {
   }
 
   async analyzeComplexity(code) {
-    return this.request('/complexity/', {
+    return this.request('/api/complexity', {
       method: 'POST',
       body: JSON.stringify({ code }),
     });
   }
 
   async debugCode(code) {
-    return this.request('/debug/', {
+    return this.request('/api/debug', {
       method: 'POST',
       body: JSON.stringify({ code }),
     });
   }
 
   async createCode(params) {
-    return this.request('/create/', {
+    return this.request('/api/create', {
       method: 'POST',
       body: JSON.stringify({ 
         problem_statement: params.prompt, 
@@ -50,7 +50,7 @@ class ApiService {
   }
 
   async getComplexityGraphData(complexityType, maxInputSize = 50) {
-    return this.request('/graph-data/', {
+    return this.request('/api/graph-data', {
       method: 'POST',
       body: JSON.stringify({ 
         complexity_type: complexityType, 

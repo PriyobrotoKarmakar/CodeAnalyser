@@ -25,6 +25,43 @@ print(f"API key loaded: {'Yes' if api_key_check else 'No'}")
 if api_key_check:
     print(f"API key starts with: {api_key_check[:10]}...")  # Show first 10 chars for debugging
 
+# Load multiple models for fallback system
+GEMINI_MODELS = [
+    os.environ.get('GEMINI_MODEL_1', 'gemini-1.5-flash'),
+    os.environ.get('GEMINI_MODEL_2', 'gemini-1.0-pro'),
+    os.environ.get('GEMINI_MODEL_3', 'gemini-1.5-flash-8b')
+]
+print(f"Loaded fallback models: {GEMINI_MODELS}")
+
+def try_gemini_request(client, prompt, max_retries=3):
+    """Try Gemini request with fallback models"""
+    for i, model in enumerate(GEMINI_MODELS):
+        try:
+            print(f"Trying model {i+1}: {model}")
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt
+            )
+            print(f"✅ Success with model {i+1}: {model}")
+            return response
+        except Exception as e:
+            error_msg = str(e).lower()
+            print(f"❌ Model {i+1} ({model}) failed: {str(e)}")
+            
+            # Check if it's a rate limit error
+            if 'quota' in error_msg or 'rate limit' in error_msg or '503' in error_msg or 'overloaded' in error_msg:
+                if i < len(GEMINI_MODELS) - 1:  # Not the last model
+                    print(f"🔄 Rate limit hit, switching to model {i+2}")
+                    continue
+            
+            # If it's not a rate limit error or it's the last model, re-raise
+            if i == len(GEMINI_MODELS) - 1:
+                raise Exception(f"All models failed. Last error: {str(e)}")
+            else:
+                continue
+    
+    raise Exception("All fallback models exhausted")
+
 class handler(BaseHTTPRequestHandler):
     def _set_cors_headers(self):
         """Set CORS headers for all responses"""
@@ -150,10 +187,7 @@ class handler(BaseHTTPRequestHandler):
         """
         
         try:
-            response = client.models.generate_content(
-                model='gemini-1.5-flash',
-                contents=prompt
-            )
+            response = try_gemini_request(client, prompt)
             analysis = response.text
             
             self.send_success({
@@ -196,10 +230,7 @@ class handler(BaseHTTPRequestHandler):
         """
         
         try:
-            response = client.models.generate_content(
-                model='gemini-1.5-flash',
-                contents=prompt
-            )
+            response = try_gemini_request(client, prompt)
             analysis = response.text
             
             self.send_success({
@@ -245,10 +276,7 @@ class handler(BaseHTTPRequestHandler):
         """
         
         try:
-            response = client.models.generate_content(
-                model='gemini-1.5-flash',
-                contents=prompt
-            )
+            response = try_gemini_request(client, prompt)
             solution = response.text
             
             self.send_success({
