@@ -1,22 +1,6 @@
 
 {
-  "version": 2,
   "buildCommand": "cd frontend && npm ci && npm run build",
   "outputDirectory": "frontend/dist",
-  "installCommand": "npm install",
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@18.x"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
-    }
-  ]
+  "installCommand": "npm install"
 }
