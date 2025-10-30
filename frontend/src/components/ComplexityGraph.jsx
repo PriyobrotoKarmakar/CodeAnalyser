@@ -142,7 +142,7 @@ const ComplexityGraph = ({
     async (complexityType, setData, setLoading) => {
       setLoading(true);
       try {
-        console.log("🔍 Fetching graph data for:", complexityType);
+        // console.log("🔍 Fetching graph data for:", complexityType);
 
         // 🚀 Step 1: Check cache first
         const cacheResult = await complexityCache.getComplexityData(
@@ -150,19 +150,19 @@ const ComplexityGraph = ({
         );
 
         if (cacheResult.found) {
-          console.log("⚡ Using cached data for:", complexityType);
+          // console.log("⚡ Using cached data for:", complexityType);
           setData(cacheResult.data);
           setLoading(false);
           return;
         }
 
         // 🌐 Step 2: Cache miss - fetch from API
-        console.log("🌐 Cache miss, fetching from API for:", complexityType);
+        // console.log("🌐 Cache miss, fetching from API for:", complexityType);
         const response = await apiService.getComplexityGraphData(
           complexityType,
           50
         );
-        console.log("📡 API response:", response);
+        // console.log("📡 API response:", response);
 
         if (response && response.graph_data) {
           // 💾 Save to cache for future use
