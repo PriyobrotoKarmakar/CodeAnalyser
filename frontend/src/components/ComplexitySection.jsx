@@ -499,7 +499,7 @@ const ComplexitySection = () => {
 
     try {
       const response = await apiService.analyzeComplexity(code);
-      console.log('Complexity API Response:', response); // Debug log
+      // console.log('Complexity API Response:', response); // Debug log
       
       // The API returns { success: true, analysis: "..." }
       if (response && response.success && response.analysis) {

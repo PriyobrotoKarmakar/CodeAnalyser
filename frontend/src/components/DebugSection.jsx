@@ -475,7 +475,7 @@ const DebugSection = () => {
 
     try {
       const response = await apiService.debugCode(code);
-      console.log('Debug API Response:', response); // Debug log
+      // console.log('Debug API Response:', response); // Debug log
       
       // The API returns { success: true, analysis: "..." }
       if (response && response.success && response.analysis) {

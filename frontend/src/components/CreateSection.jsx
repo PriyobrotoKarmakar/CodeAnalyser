@@ -442,14 +442,14 @@ const CreateSection = () => {
 
     try {
       const response = await apiService.createCode({ prompt, language });
-      console.log('Create API Response:', response); // Debug log
-      console.log('Response type:', typeof response); // Debug log
-      console.log('Solution field:', response?.solution); // Debug log
-      console.log('Solution type:', typeof response?.solution); // Debug log
+      // console.log('Create API Response:', response); // Debug log
+      // console.log('Response type:', typeof response); // Debug log
+      // console.log('Solution field:', response?.solution); // Debug log
+      // console.log('Solution type:', typeof response?.solution); // Debug log
       
       // The API returns { success: true, solution: "..." }
       if (response && response.success && response.solution && typeof response.solution === 'string') {
-        console.log('Setting result to:', response.solution); // Debug log
+        // console.log('Setting result to:', response.solution); // Debug log
         setResult(response.solution);
         // Auto-scroll to results section after a short delay
         setTimeout(() => {
@@ -461,7 +461,7 @@ const CreateSection = () => {
           }
         }, 300);
       } else if (typeof response === 'string') {
-        console.log('Response is string, setting directly'); // Debug log
+        // console.log('Response is string, setting directly'); // Debug log
         setResult(response);
         // Auto-scroll to results section after a short delay
         setTimeout(() => {

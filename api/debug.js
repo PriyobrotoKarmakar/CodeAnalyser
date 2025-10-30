@@ -2,9 +2,9 @@ const axios = require('axios');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODELS = [
-    process.env.GEMINI_MODEL_1,
-    process.env.GEMINI_MODEL_2,
-    process.env.GEMINI_MODEL_3
+    process.env.GEMINI_MODEL_1 || 'gemini-2.0-flash-lite',
+    process.env.GEMINI_MODEL_2 || 'gemini-2.5-flash-lite',
+    process.env.GEMINI_MODEL_3 || 'gemini-2.0-flash'
 ];
 
 async function tryGeminiRequest(prompt) {
