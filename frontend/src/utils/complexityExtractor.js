@@ -4,7 +4,7 @@ export const extractComplexities = (analysisText) => {
     return { timeComplexity: 'O(n)', spaceComplexity: 'O(1)' };
   }
 
-  console.log('Raw analysis text:', analysisText); // Debug log
+  //console.log('Raw analysis text:', analysisText); // Debug log
 
   const text = analysisText.toLowerCase();
   
@@ -37,7 +37,7 @@ export const extractComplexities = (analysisText) => {
     const match = pattern.exec(text);
     if (match && match[1]) {
       timeComplexity = `O(${match[1].trim()})`;
-      console.log('Found time complexity:', timeComplexity); // Debug log
+      //console.log('Found time complexity:', timeComplexity); // Debug log
       break;
     }
   }
@@ -48,7 +48,7 @@ export const extractComplexities = (analysisText) => {
     const match = pattern.exec(text);
     if (match && match[1]) {
       spaceComplexity = `O(${match[1].trim()})`;
-      console.log('Found space complexity:', spaceComplexity); // Debug log
+      //console.log('Found space complexity:', spaceComplexity); // Debug log
       break;
     }
   }
@@ -76,7 +76,7 @@ export const extractComplexities = (analysisText) => {
     spaceComplexity: cleanComplexity(spaceComplexity)
   };
   
-  console.log('Final complexities:', result); // Debug log
+  //console.log('Final complexities:', result); // Debug log
   return result;
 };
 
