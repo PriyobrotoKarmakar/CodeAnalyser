@@ -10,15 +10,15 @@ export class ComplexityCacheManager {
     if (this.cacheLoaded) return this.cache;
     
     try {
-      console.log('🔄 Loading complexity cache from /complexity-cache.json');
+      //console.log('🔄 Loading complexity cache from /complexity-cache.json');
       const response = await fetch('/complexity-cache.json');
       if (!response.ok) {
         throw new Error(`Failed to load cache: ${response.status}`);
       }
       this.cache = await response.json();
       this.cacheLoaded = true;
-      console.log('✅ Complexity cache loaded successfully', Object.keys(this.cache).length, 'entries');
-      console.log('🔍 Sample keys:', Object.keys(this.cache).slice(0, 5));
+      //console.log('✅ Complexity cache loaded successfully', Object.keys(this.cache).length, 'entries');
+      //console.log('🔍 Sample keys:', Object.keys(this.cache).slice(0, 5));
       return this.cache;
     } catch (error) {
       console.error('❌ Failed to load complexity cache:', error);
@@ -48,13 +48,13 @@ export class ComplexityCacheManager {
     }
 
     const normalized = this.normalizeComplexity(complexity);
-    console.log(`🔍 Looking for complexity: "${complexity}" -> normalized: "${normalized}"`);
-    console.log(`📋 Cache keys available:`, Object.keys(this.cache || {}));
-    console.log(`🎯 Does cache contain key "${normalized}"?`, this.cache && this.cache[normalized] ? 'YES' : 'NO');
+    //console.log(`🔍 Looking for complexity: "${complexity}" -> normalized: "${normalized}"`);
+    //console.log(`📋 Cache keys available:`, Object.keys(this.cache || {}));
+    //console.log(`🎯 Does cache contain key "${normalized}"?`, this.cache && this.cache[normalized] ? 'YES' : 'NO');
 
     // Direct match
     if (this.cache[normalized]) {
-      console.log(`✅ Cache HIT for: ${normalized}`);
+      //console.log(`✅ Cache HIT for: ${normalized}`);
       return {
         found: true,
         data: this.cache[normalized].data,
@@ -67,7 +67,7 @@ export class ComplexityCacheManager {
     const alternatives = this.getAlternativePatterns(normalized);
     for (const alt of alternatives) {
       if (this.cache[alt]) {
-        console.log(`✅ Cache HIT for alternative: ${alt}`);
+        //console.log(`✅ Cache HIT for alternative: ${alt}`);
         return {
           found: true,
           data: this.cache[alt].data,
@@ -77,7 +77,7 @@ export class ComplexityCacheManager {
       }
     }
 
-    console.log(`❌ Cache MISS for: ${normalized}`);
+    //console.log(`❌ Cache MISS for: ${normalized}`);
     return { found: false };
   }
 
@@ -154,7 +154,7 @@ export class ComplexityCacheManager {
       cached_at: new Date().toISOString()
     };
 
-    console.log(`💾 Saved new complexity to cache: ${normalized}`);
+    //console.log(`💾 Saved new complexity to cache: ${normalized}`);
     
     // Note: In a real app, you'd want to persist this back to the server
     // For now, it's just stored in memory for the current session
@@ -169,7 +169,7 @@ export class ComplexityCacheManager {
   clearCache() {
     this.cache = {};
     this.cacheLoaded = false;
-    console.log('🗑️ Cache cleared');
+    //console.log('🗑️ Cache cleared');
   }
 }
 
